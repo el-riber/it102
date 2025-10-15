@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My second html page</title>
+</head>
+<body>
+  <h1 id="myHeader"></h1>
+
+  <script>
+    document.getElementById("myHeader").textContent =
+      "My new headline generated via JavaScript!";
+  </script>
+</body>
+</html>
