@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 2 - Kilometers and Miles Converter</title>
+</head>
+<body>
+  <h1>Web Application Week 2 - Kilometers and Miles Converter</h1>
+  <p>This program converts distances between kilometers and miles based on user input.</p>
+
+  <script>
+                              
+    let choice = prompt("Type 'K' to convert kilometers to miles, or 'M' to convert miles to kilometers:");
+
+    
+    if (choice === "K" || choice === "k") {
+      
+      let kilometers = parseFloat(prompt("Enter the number of kilometers:"));
+      
+      
+      let miles = kilometers * 0.621371;
+      
+      
+      alert(kilometers + " kilometers = " + miles.toFixed(3) + " miles");
+
+    } else if (choice === "M" || choice === "m") {
+      
+      let miles = parseFloat(prompt("Enter the number of miles:"));
+      
+      
+      let kilometers = miles / 0.621371;
+      
+      
+      alert(miles + " miles = " + kilometers.toFixed(3) + " kilometers");
+
+    } else {
+      
+      alert("Invalid choice! Please type 'K' or 'M'.");
+    }
+  </script>
+</body>
+</html>
