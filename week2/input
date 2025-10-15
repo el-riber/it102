@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang=“en”>
+<head>
+  <meta charset=“UTF-8”>
+  <title>Practice 2_2: User Input</title>
+</head>
+<body>
+  <script>
+    document.write(“Interviewee Information Page<br/>”);
+
+    document.write(“Candidate name: “ + prompt(“Enter your full name”) + “<br/>”);
+    document.write(“Candidate email address: “ + prompt(“Enter your email address”) + “<br/>”);
+    document.write(“Candidate available start date: “ + prompt(“Enter your available start date”) + “<br/>”);
+  </script>
+</body>
+</html>
