@@ -1,87 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ASCII Art Square</title>
-  <style>
-    body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
-    .section-title { margin: 0.5rem 0 0.25rem; font-weight: 700; }
-    pre { padding: 8px 10px; background: #f5f5f5; border-radius: 6px; }
-  </style>
 </head>
 <body>
-  <h1>ASCII Art Square</h1>
-
-  <p class="section-title">Filled Square</p>
+  <h2>ASCII Art Square</h2>
   <pre id="filled"></pre>
-
-  <p class="section-title">Hollow Square (Optional Challenge)</p>
   <pre id="hollow"></pre>
 
   <script>
-    /**
-     * Prompt the user for a size between 3 and 30 (inclusive).
-     * Re-prompts on out-of-range or non-numeric input.
-     */
-    function getValidSize(min, max) {
-      while (true) {
-        const raw = prompt(`Enter a square size between ${min} and ${max}:`);
-        // If user cancels prompt, keep asking (assignment assumes a number will be entered).
-        if (raw === null) continue;
-
-        const n = Number(raw);
-        if (!Number.isNaN(n) && Number.isInteger(n) && n >= min && n <= max) {
-          return n;
-        }
-
-        alert(`Please enter a WHOLE NUMBER between ${min} and ${max}.`);
-      }
+    // Ask user for the size of the square
+    let size = prompt("Enter a square size between 3 and 30:");
+    
+    // Validate input (re-prompt until valid)
+    while (isNaN(size) || size < 3 || size > 30) {
+      size = prompt("Invalid input. Please enter a number between 3 and 30:");
     }
 
-    /**
-     * Build a FILLED square of asterisks using nested loops.
-     * @param {number} size
-     * @returns {string}
-     */
-    function buildFilledSquare(size) {
-      let out = "";
-      for (let r = 0; r < size; r++) {          // rows
-        let line = "";
-        for (let c = 0; c < size; c++) {        // columns
-          line += "*";
-        }
-        out += line + (r < size - 1 ? "\n" : ""); // newline between rows
+    size = Number(size); // Convert to number
+
+    // Draw FILLED square
+    let filled = "";
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        filled += "*";
       }
-      return out;
+      filled += "\n";
     }
 
-    /**
-     * Build a HOLLOW square of asterisks (borders = '*', inside = spaces).
-     * Uses one loop for rows and a nested loop for columns.
-     * @param {number} size
-     * @returns {string}
-     */
-    function buildHollowSquare(size) {
-      let out = "";
-      for (let r = 0; r < size; r++) {                  // rows
-        let line = "";
-        for (let c = 0; c < size; c++) {                // columns
-          const isBorder = r === 0 || r === size - 1 || c === 0 || c === size - 1;
-          line += isBorder ? "*" : " ";
+    // Draw HOLLOW square
+    let hollow = "";
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        if (row === 0 || row === size - 1 || col === 0 || col === size - 1) {
+          hollow += "*";
+        } else {
+          hollow += " ";
         }
-        out += line + (r < size - 1 ? "\n" : "");
       }
-      return out;
+      hollow += "\n";
     }
 
-    // --- Main program flow ---
-    const size = getValidSize(3, 30);
-
-    // Generate both versions
-    const filled = buildFilledSquare(size);
-    const hollow = buildHollowSquare(size);
-
-    // Write to the page (inside <pre> so spacing is preserved)
+    // Show results
     document.getElementById("filled").textContent = filled;
     document.getElementById("hollow").textContent = hollow;
   </script>
