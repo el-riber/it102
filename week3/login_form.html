@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SOTD03 - Login Form</title>
+  <script>
+    // This script runs when the user clicks the "Submit" button
+    function displayData() {
+      // Get all form inputs by their index in the form
+      let firstName = document.forms["customerDataForm"].elements[0].value;
+      let lastName = document.forms["customerDataForm"].elements[1].value;
+      let email = document.forms["customerDataForm"].elements[2].value;
+      let password = document.forms["customerDataForm"].elements[3].value;
+
+      // Create the formatted output
+      let output = firstName + " " + lastName + "<br>" +
+                   "Email: " + email + "<br>" +
+                   "Password: " + password;
+
+      // Display in the <p> with id="custDataDisplay"
+      document.getElementById("custDataDisplay").innerHTML = output;
+    }
+  </script>
+</head>
+
+<body>
+  <h1>SOTD03 - Login Form</h1>
+  <hr>
+
+  <form name="customerDataForm">
+    First Name: <input type="text"><br>
+    Last Name: <input type="text"><br>
+    Email Address: <input type="text"><br>
+    Password: <input type="password"><br>
+    <input type="button" value="Submit" onclick="displayData()">
+  </form>
+
+  <h3>Customer Data</h3>
+  <p id="custDataDisplay"></p>
+</body>
+</html>
