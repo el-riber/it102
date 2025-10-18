@@ -10,17 +10,17 @@
   <pre id="hollow"></pre>
 
   <script>
-    // Ask user for the size of the square
+    
     let size = prompt("Enter a square size between 3 and 30:");
     
-    // Validate input (re-prompt until valid)
+   
     while (isNaN(size) || size < 3 || size > 30) {
       size = prompt("Invalid input. Please enter a number between 3 and 30:");
     }
 
     size = Number(size); // Convert to number
 
-    // Draw FILLED square
+    
     let filled = "";
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
@@ -29,7 +29,7 @@
       filled += "\n";
     }
 
-    // Draw HOLLOW square
+    
     let hollow = "";
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
@@ -42,7 +42,7 @@
       hollow += "\n";
     }
 
-    // Show results
+    
     document.getElementById("filled").textContent = filled;
     document.getElementById("hollow").textContent = hollow;
   </script>
