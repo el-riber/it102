@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Application Week 3 - Payroll</title>
+  <script>
+    
+    function calculateGrossPay(hoursWorked) {
+      const hourlyRate = 19.0;
+      let grossPay = 0;
+      if (hoursWorked <= 40) {
+        grossPay = hoursWorked * hourlyRate;
+      } else {
+        const regularPay = 40 * hourlyRate;
+        const overtimeHours = hoursWorked - 40;
+        const overtimePay = overtimeHours * hourlyRate * 1.5;
+        grossPay = regularPay + overtimePay;
+      }
+      return grossPay;
+    }
+
+
+    function calculateSocialSecurity(grossPay) {
+      const rate = 0.062;
+      return grossPay * rate;
+    }
+
+   
+    function calculateMedicare(grossPay) {
+      const rate = 0.0145;
+      return grossPay * rate;
+    }
+
+    
+    function calculateWithholding(grossPay, allowances) {
+      const allowanceAmount = 77.90;
+      const withholdingBase = grossPay - (allowances * allowanceAmount);
+      const withholdingRate = 0.20;
+      return withholdingBase * withholdingRate;
+    }
+
+   
+    function calculateNetPay(grossPay, socialSecurity, medicare, withholding) {
+      return grossPay - (socialSecurity + medicare + withholding);
+    }
+
+
+    function generatePayStub(employeeName, hoursWorked, allowances) {
+      const grossPay = calculateGrossPay(hoursWorked);
+      const socialSecurity = calculateSocialSecurity(grossPay);
+      const medicare = calculateMedicare(grossPay);
+      const withholding = calculateWithholding(grossPay, allowances);
+      const netPay = calculateNetPay(grossPay, socialSecurity, medicare, withholding);
+
+
+      let output = "<h3>Pay Stub</h3>";
+      output += `<strong>Employee Name:</strong> ${employeeName}<br>`;
+      output += `<strong>Hours Worked:</strong> ${hoursWorked}<br>`;
+      output += `<strong>Gross Pay:</strong> $${grossPay.toFixed(2)}<br>`;
+      output += `<strong>Social Security:</strong> $${socialSecurity.toFixed(2)}<br>`;
+      output += `<strong>Medicare:</strong> $${medicare.toFixed(2)}<br>`;
+      output += `<strong>Withholding:</strong> $${withholding.toFixed(2)}<br>`;
+      output += `<strong>Net Pay:</strong> $${netPay.toFixed(2)}<br>`;
+      document.getElementById("payrollStub").innerHTML = output;
+    }
+
+  
+    function doPayroll() {
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const hoursWorked = parseFloat(document.getElementById("hoursWorked").value);
+      const allowances = parseFloat(document.getElementById("allowances").value);
+      const employeeName = firstName + " " + lastName;
+
+      generatePayStub(employeeName, hoursWorked, allowances);
+    }
+  </script>
+</head>
+
+<body>
+  <h2>Web Application Week 3 - Payroll</h2>
+  <form>
+    First Name: <input type="text" id="firstName"><br>
+    Last Name: <input type="text" id="lastName"><br>
+    Hours Worked: <input type="number" id="hoursWorked"><br>
+    Number of Allowances: <input type="number" id="allowances"><br>
+    <input type="button" value="Calculate Payroll" onclick="doPayroll()">
+  </form>
+
+  <hr>
+  <div id="payrollStub"></div>
+</body>
+</html>
