@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment 4 - Playing Card Object</title>
+    <script>
+        // Card Constructor Function
+        function Card(suit, rank) {
+            // Properties
+            this.suit = suit;           // Suit of the card (Hearts, Clubs, etc.)
+            this.rank = rank;           // Rank of the card (A, 2, 3, ... K)
+            this.isVisible = false;     // Card starts as hidden
+
+            // Methods
+            this.show = function () {
+                this.isVisible = true;  // Makes the card visible
+            }
+
+            this.hide = function () {
+                this.isVisible = false; // Makes the card hidden
+            }
+        }
+
+        function runProgram() {
+            // Instantiate 2 card objects
+            var card1 = new Card("Hearts", "A");
+            var card2 = new Card("Spades", "10");
+
+            // Display original values to the webpage
+            document.getElementById("output").innerHTML += "<h3>Initial Card States:</h3>";
+            document.getElementById("output").innerHTML += "Card 1 → Suit: " + card1.suit + ", Rank: " + card1.rank + ", isVisible: " + card1.isVisible + "<br>";
+            document.getElementById("output").innerHTML += "Card 2 → Suit: " + card2.suit + ", Rank: " + card2.rank + ", isVisible: " + card2.isVisible + "<br><br>";
+
+            // Use show() and hide() to change visibility
+            card1.show();
+            card2.show(); // you can change one to hide() if you want
+
+            // Display updated values
+            document.getElementById("output").innerHTML += "<h3>Updated Card States After show()/hide():</h3>";
+            document.getElementById("output").innerHTML += "Card 1 → Suit: " + card1.suit + ", Rank: " + card1.rank + ", isVisible: " + card1.isVisible + "<br>";
+            document.getElementById("output").innerHTML += "Card 2 → Suit: " + card2.suit + ", Rank: " + card2.rank + ", isVisible: " + card2.isVisible + "<br>";
+        }
+    </script>
+</head>
+
+<body onload="runProgram()">
+    <h2>Assignment 4 – Playing Card Object</h2>
+    <div id="output"></div>
+</body>
+</html>
