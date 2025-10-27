@@ -1,45 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Grocery List</title>
+    <title>Let's Make a Deal</title>
 </head>
 <body>
-  <h2>Grocery List</h2>
-  <p>Enter grocery items separated by commas.</p>
-  <textarea id="groceryInput" placeholder="Enter grocery items and separate with commas"></textarea>
-  <br />
-  <button onclick="createGroceryList()">Create Grocery List</button>
+    <h1>Let's Make a Deal</h1>
+    <hr>
 
-  <pre id="groceryList"></pre>
-  <p>Total items: <span id="totalItems">0</span></p>
+    <p>Choose a door:</p>
+    <select id="doorSelection">
+        <option value="0">Select a Door</option>
+        <option value="door1">Door #1</option>
+        <option value="door2">Door #2</option>
+        <option value="door3">Door #3</option>
+    </select>
 
-  <script>
-    // Build the grocery list from the textarea input.
-    function createGroceryList() {
-      // 1) Check for empty input
-      const input = document.getElementById('groceryInput').value.trim();
-      if (!input) {
-        alert('Please enter grocery items');
-        return;
-      }
+    <button onclick="doorPrize()">Select</button>
 
-      // 2) Split input string into array (by comma), trim each, and drop empties
-      let groceryItems = input
-        .split(',')                  // split by comma
-        .map(s => s.trim())          // trim whitespace around each item
-        .filter(Boolean);            // remove empty strings
+    <p id="prize">Good Luck!</p>
 
-      // 3) Sort groceries alphabetically (case-insensitive)
-      groceryItems.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    <script>
+        // Storing prizes inside a Literal Object (key-value pairs)
+        const prizes = {
+            door1: "New Car",
+            door2: "Goat",
+            door3: "Pencil"
+        };
 
-      // 4) Display the list nicely, one item per line with numbering
-      const lines = groceryItems.map((item, i) => `${i + 1}. ${item}`);
-      document.getElementById('groceryList').textContent = lines.join('\n'); // <pre> preserves newlines
+        // Function to show the selected prize
+        function doorPrize() {
+            let userChoice = document.getElementById("doorSelection").value;
 
-      // 5) Show the total number of items (length of the array)
-      document.getElementById('totalItems').textContent = groceryItems.length;
-    }
-  </script>
+            if (userChoice === "0") {
+                document.getElementById("prize").innerHTML = "Please select a valid door.";
+            } else {
+                document.getElementById("prize").innerHTML = 
+                    "Your prize is a " + prizes[userChoice] + "!";
+            }
+        }
+    </script>
+
 </body>
 </html>
