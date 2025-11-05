@@ -1,0 +1,73 @@
+// ------------------------------------------------------
+//  Card Object Constructor
+// ------------------------------------------------------
+function Card(suit, rank) {
+    this.suit = suit;
+    this.rank = rank;
+    this.isVisible = false; // used to track if the card has been dealt or not
+
+    // Show card face
+    this.show = function() {
+        this.isVisible = true;
+        return `${this.rank} of ${this.suit}`;
+    };
+
+    // Hide card face
+    this.hide = function() {
+        this.isVisible = false;
+    };
+}
+
+// ------------------------------------------------------
+//  Create Deck of 52 Cards
+// ------------------------------------------------------
+function createDeck() {
+    const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+    const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    const deck = [];
+
+    // Loop through suits and ranks
+    for (let suit of suits) {
+        for (let rank of ranks) {
+            deck.push(new Card(suit, rank));
+        }
+    }
+
+    return deck;
+}
+
+// ------------------------------------------------------
+//  Deal 3 Random Cards (No Duplicates)
+// ------------------------------------------------------
+function dealThreeCards(deck) {
+    let hand = [];
+
+    while (hand.length < 3) {
+        let randomIndex = Math.floor(Math.random() * 52);
+        let selectedCard = deck[randomIndex];
+
+        // Only add if card has not been dealt before
+        if (!selectedCard.isVisible) {
+            selectedCard.show();
+            hand.push(selectedCard);
+        }
+    }
+
+    return hand;
+}
+
+// ------------------------------------------------------
+//  Demonstration
+// ------------------------------------------------------
+let deck = createDeck();
+let hand = dealThreeCards(deck);
+
+console.log("Your 3 cards are:");
+hand.forEach(card => console.log(card.show()));
+
+console.log("\nChecking if cards are in the deck:");
+deck.forEach(card => {
+    if (card.isVisible) {
+        console.log(`DEALT → ${card.rank} of ${card.suit}`);
+    }
+});
