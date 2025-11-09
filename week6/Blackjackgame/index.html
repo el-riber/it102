@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Blackjack — Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+  <main class="panel">
+    <h1>Blackjack Game</h1>
+    
+    <form id="loginForm" novalidate>
+      <label for="username">Digite seu nome:</label>
+      <input id="username" name="username" type="text" placeholder="ex: Maria Silva" />
+      <button id="startBtn" type="submit" disabled>Iniciar Jogo</button>
+      <div id="errorMsg" class="error" aria-live="polite"></div>
+    </form>
+
+    
+    <section id="gameArea" style="display:none;">
+      <p id="welcome"></p>
+      
+    </section>
+  </main>
+
+  <script src="scripts/login.js"></script>
+</body>
+</html>
