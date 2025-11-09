@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Simple Blackjack</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; display:flex; gap:24px; padding:24px; }
+    .table { border:1px solid #ddd; padding:16px; width:420px; border-radius:8px; background:#fafafa; }
+    h2 { margin:0 0 8px 0; font-size:20px; }
+    .hand { min-height:64px; margin:8px 0; display:flex; gap:8px; flex-wrap:wrap; }
+    .card { border-radius:6px; padding:6px 8px; background:white; box-shadow:0 1px 2px rgba(0,0,0,0.08); border:1px solid #eee; }
+    .controls { margin-top:12px; display:flex; gap:8px; }
+    button { padding:8px 12px; border-radius:6px; border:1px solid #ccc; background:white; cursor:pointer; }
+    button:disabled { opacity:.5; cursor:default; }
+    .status { margin-top:12px; font-weight:600; min-height:1.2em; }
+  </style>
+</head>
+<body>
+
+  <div class="table" id="game">
+    <h2>Blackjack — Player</h2>
+    <div>Player hand total: <span id="player-total">0</span></div>
+    <div class="hand" id="player-hand"></div>
+
+    <div style="margin-top:12px;">
+      <h2>Dealer</h2>
+      <div>Dealer hand total: <span id="dealer-total">0</span></div>
+      <div class="hand" id="dealer-hand"></div>
+    </div>
+
+    <div class="controls">
+      <button id="btn-hit">Hit</button>
+      <button id="btn-stand">Stand</button>
+      <button id="btn-new">New Game</button>
+    </div>
+
+    <div class="status" id="status"></div>
+  </div>
+
+<script>
+/*
+  Simple Blackjack
+  - standard 52-card deck
+  - Ace counted as 11 or 1 (adjusted to avoid bust)
+  - Dealer draws until 17 or more
+*/
+
+// ----- deck helpers -----
+const SUITS = ['♠','♥','♦','♣'];
+const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+function createDeck(){
+  const deck = [];
+  for(const s of SUITS){
+    for(const r of RANKS){
+      deck.push({suit:s, rank:r});
+    }
+  }
+  return deck;
+}
+
+function shuffle(deck){
+  // Fisher-Yates
+  for(let i = deck.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+}
+
+// value of a single card for totals (ace returns 11 here; adjust later)
+function cardValue(card){
+  if(card.rank === 'A') return 11;
+  if(['J','Q','K'].includes(card.rank)) return 10;
+  return Number(card.rank);
+}
+
+function handTotal(hand){
+  // sum values and reduce Aces (11 -> 1) as needed
+  let total = 0;
+  let aces = 0;
+  for(const c of hand){
+    const v = cardValue(c);
+    total += v;
+    if(c.rank === 'A') aces++;
+  }
+  // reduce Aces from 11 to 1 by subtracting 10 while total > 21 and aces left
+  while(total > 21 && aces > 0){
+    total -= 10;
+    aces--;
+  }
+  return total;
+}
+
+// ----- DOM helpers -----
+const el = id => document.getElementById(id);
+function renderHand(containerId, hand, hideFirst=false){
+  const container = el(containerId);
+  container.innerHTML = '';
+  hand.forEach((c, i) => {
+    const cardEl = document.createElement('div');
+    cardEl.className = 'card';
+    if(hideFirst && i === 0) {
+      cardEl.textContent = '🂠'; // face-down placeholder
+    } else {
+      cardEl.textContent = `${c.rank}${c.suit}`;
+    }
+    container.appendChild(cardEl);
+  });
+}
+
+// ----- game state -----
+let deck, playerHand, dealerHand, playerStand, gameOver;
+
+function startNewGame(){
+  deck = createDeck();
+  shuffle(deck);
+  playerHand = [];
+  dealerHand = [];
+  playerStand = false;
+  gameOver = false;
+  el('status').textContent = '';
+
+  // initial deal: player 2, dealer 2 (dealer's first card hidden)
+  playerHand.push(deck.pop());
+  dealerHand.push(deck.pop());
+  playerHand.push(deck.pop());
+  dealerHand.push(deck.pop());
+
+  updateUI(true);
+  enableControls(true);
+}
+
+// draw one card from deck to target hand
+function drawTo(hand){
+  if(deck.length === 0){
+    // if deck empty (unlikely for this small game), recreate and shuffle
+    deck = createDeck();
+    shuffle(deck);
+  }
+  hand.push(deck.pop());
+}
+
+// player requests a hit
+function playerHit(){
+  if(gameOver || playerStand) return;
+  drawTo(playerHand);
+  updateUI(true);
+  const pTotal = handTotal(playerHand);
+  if(pTotal > 21){
+    finishRound(); // player busts
+  }
+}
+
+// player stands: dealer plays
+function playerStandAction(){
+  if(gameOver) return;
+  playerStand = true;
+  // reveal dealer and let dealer play to >= 17
+  updateUI(false);
+  dealerPlay();
+}
+
+// dealer behavior
+function dealerPlay(){
+  // reveal while < 17, hit
+  while(handTotal(dealerHand) < 17){
+    drawTo(dealerHand);
+  }
+  finishRound();
+}
+
+// compute and display result
+function finishRound(){
+  const pTotal = handTotal(playerHand);
+  const dTotal = handTotal(dealerHand);
+  let message = '';
+
+  if(pTotal > 21){
+    message = `Player busts (${pTotal}). Dealer wins.`;
+  } else if(dTotal > 21){
+    message = `Dealer busts (${dTotal}). Player wins!`;
+  } else if(pTotal > dTotal){
+    message = `Player wins (${pTotal} vs ${dTotal})!`;
+  } else if(pTotal < dTotal){
+    message = `Dealer wins (${dTotal} vs ${pTotal}).`;
+  } else {
+    message = `Push (tie) — ${pTotal}.`;
+  }
+
+  el('status').textContent = message;
+  gameOver = true;
+  enableControls(false);
+  updateUI(false);
+}
+
+function enableControls(enabled){
+  el('btn-hit').disabled = !enabled;
+  el('btn-stand').disabled = !enabled;
+  el('btn-new').disabled = false;
+}
+
+// update DOM
+function updateUI(hideDealerFirstCard=true){
+  const pTotal = handTotal(playerHand);
+  const dTotalShown = hideDealerFirstCard ? '?' : handTotal(dealerHand);
+
+  el('player-total').textContent = pTotal;
+  el('dealer-total').textContent = dTotalShown;
+
+  renderHand('player-hand', playerHand, false);
+  renderHand('dealer-hand', dealerHand, hideDealerFirstCard);
+
+  // auto-disable hit if player bust or already stood
+  if(handTotal(playerHand) > 21){
+    enableControls(false);
+  }
+}
+
+// ----- wire up buttons -----
+el('btn-hit').addEventListener('click', playerHit);
+el('btn-stand').addEventListener('click', playerStandAction);
+el('btn-new').addEventListener('click', startNewGame);
+
+// start
+startNewGame();
+</script>
+</body>
+</html>
