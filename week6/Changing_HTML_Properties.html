@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<!-- HTML Table for Testing Purposes -->
+<table id="myTable" style="border: 1px solid red; font-size: 20px; font-weight: bold">
+  <tr id="row1" style="color: blue">
+    <td id="1.1" style="border: 2px solid black">Row 1 Col 1</td>
+    <td id="1.2" style="border: 2px solid black">Row 1 Col 2</td>
+  </tr>
+</table>
+
+<!-- Buttons -->
+<br><br>
+
+<button type="submit" onclick="changeTextColor()">Change Text Color</button>
+<br><br>
+
+<button type="submit" onclick="changeFontSize()">Change Font Size</button>
+<br><br>
+
+<button type="submit" onclick="changeBorderThickness()">Change Border Thickness</button>
+<br><br>
+
+<button type="submit" onclick="changeBorderColor()">Change Border Color</button>
+
+<script>
+// First Function (already given)
+// Changes text color from blue ⇄ green
+function changeTextColor(){
+  var textcolor = document.getElementById("row1").style.color;
+  if (textcolor == "green"){
+      textcolor = "blue";
+  }else{
+      textcolor = "green";
+  }
+  document.getElementById("row1").style.color = textcolor;
+}
+
+
+// Second Function: Change font size (20px ⇄ 30px)
+function changeFontSize(){
+  var currentSize = document.getElementById("myTable").style.fontSize;
+  if(currentSize == "30px"){
+      document.getElementById("myTable").style.fontSize = "20px";
+  }else{
+      document.getElementById("myTable").style.fontSize = "30px";
+  }
+}
+
+
+// Third Function: Change border thickness (2px ⇄ 6px)
+function changeBorderThickness(){
+  var currentThickness = document.getElementById("1.1").style.borderWidth;
+  if(currentThickness == "6px"){
+      document.getElementById("1.1").style.borderWidth = "2px";
+      document.getElementById("1.2").style.borderWidth = "2px";
+  } else {
+      document.getElementById("1.1").style.borderWidth = "6px";
+      document.getElementById("1.2").style.borderWidth = "6px";
+  }
+}
+
+
+// Fourth Function: Change border color (black ⇄ purple)
+function changeBorderColor(){
+  var currentColor = document.getElementById("1.1").style.borderColor;
+  if(currentColor == "purple"){
+      document.getElementById("1.1").style.borderColor = "black";
+      document.getElementById("1.2").style.borderColor = "black";
+  } else {
+      document.getElementById("1.1").style.borderColor = "purple";
+      document.getElementById("1.2").style.borderColor = "purple";
+  }
+}
+</script>
+
+</body>
+</html>
