@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BAS Math Eligibility Checker</title>
+
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 850px;
+      margin: 2rem auto;
+      background: #fafafa;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      margin-bottom: 0.4rem;
+      color: #003366;
+      font-size: 1.9rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+    }
+
+    form {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: 0.4rem;
+    }
+
+    input[type="text"] {
+      padding: 0.45rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      min-width: 150px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.45rem 0.75rem;
+      background: #003366;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #002850;
+    }
+
+    #results {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      background: #eef3f8;
+      border-left: 4px solid #003366;
+      border-radius: 6px;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>BAS Application Development Eligibility Checker</h1>
+  <p>
+    This tool helps you check whether your most recent or highest math course meets the BAS Application Development requirement at North Seattle College.
+    Students qualify when they complete a QSR course in Calculus or Statistics.
+  </p>
+
+  <form onsubmit="main(); return false;">
+    <label for="courseInput">Math Course:</label>
+    <input type="text" id="courseInput" placeholder="Ex: MATH097, MATH146">
+    <button type="submit">Check Eligibility</button>
+  </form>
+
+  <div id="results"></div>
+
+<script>
+  // This object stores all math courses we are using for the BAS eligibility check.
+  // Each course has a name, whether it qualifies for BAS, and the next recommended course.
+  const allMathCourses = {
+    MATH081: { name: "Basic Math", qualifies: false, next: "MATH084" },
+    MATH084: { name: "Algebra I", qualifies: false, next: "MATH085" },
+    MATH085: { name: "Algebra II", qualifies: false, next: "MATH097" },
+    MATH097: { name: "Elementary Algebra", qualifies: false, next: "MATH098" },
+    MATH098: { name: "Intermediate Algebra", qualifies: false, next: "MATH099" },
+    MATH099: { name: "Essentials of Intermediate Algebra", qualifies: false, next: "MATH107" },
+
+    MATH107: { name: "Math in Society", qualifies: false, next: "MATH116" },
+    MATH116: { name: "Applications of Math", qualifies: false, next: "MATH141" },
+
+    MATH141: { name: "Precalculus I", qualifies: false, next: "MATH142" },
+    MATH142: { name: "Precalculus II", qualifies: false, next: "MATH151" },
+
+    // From this point on the courses are QSR, so they meet the BAS requirement
+    MATH146: { name: "Elementary Statistics", qualifies: true, next: "" },
+    MATH148: { name: "Business Calculus", qualifies: true, next: "" },
+    MATH151: { name: "Calculus I", qualifies: true, next: "MATH152" },
+    MATH152: { name: "Calculus II", qualifies: true, next: "MATH163" },
+    MATH163: { name: "Calculus III", qualifies: true, next: "MATH238" },
+
+    MATH211: { name: "Elements of Statistical Methods", qualifies: true, next: "" },
+    MATH220: { name: "Linear Algebra", qualifies: true, next: "" },
+    MATH224: { name: "Vector Calculus", qualifies: true, next: "" },
+    MATH238: { name: "Differential Equations", qualifies: true, next: "" }
+  };
+
+
+  // This is the main function. It is called when the student submits the form.
+  // It collects the course code, checks eligibility, and displays the results.
+  function main() {
+    const courseCode = getCourseNumber();
+
+    // If the student typed something invalid we stop the script here
+    if (!courseCode) return;
+
+    // Check whether the course meets BAS requirements
+    const result = checkEligibility(courseCode);
+
+    // Display outcome to the webpage
+    displayResults(result);
+  }
+
+
+  // This function reads the course typed by the student and validates it.
+  // It returns the valid course code or returns null if the input is not acceptable.
+  function getCourseNumber() {
+    const input = document.getElementById("courseInput").value.trim();
+    const box = document.getElementById("results");
+
+    // Checking for blank input
+    if (input === "") {
+      box.innerHTML = "Please type a math course before checking eligibility.";
+      return null;
+    }
+
+    // Formatting the input to match the course keys in our object
+    const course = input.toUpperCase().replace(/\s+/g, "");
+
+    // Pattern check for MATH### format
+    const pattern = /^MATH\d{3}$/;
+    if (!pattern.test(course)) {
+      box.innerHTML = "Please enter a valid math course such as MATH097 or MATH151.";
+      return null;
+    }
+
+    // Checking if the course exists in our list
+    if (!allMathCourses[course]) {
+      box.innerHTML = "This course is not listed in the NSC Math Sequence chart.";
+      return null;
+    }
+
+    return course;
+  }
+
+
+  // This function checks whether the chosen course meets the BAS requirement.
+  // It returns an object containing information about the course and whether it qualifies.
+  function checkEligibility(courseCode) {
+    const info = allMathCourses[courseCode];
+
+    return {
+      code: courseCode,
+      name: info.name,
+      meets: info.qualifies,
+      next: info.next
+    };
+  }
+
+
+  // This function displays the final message for the student based on eligibility.
+  function displayResults(result) {
+    const box = document.getElementById("results");
+
+    let message = `<strong>Math Course:</strong> ${result.code} — ${result.name}<br><br>`;
+
+    if (result.meets) {
+      message += "Congratulations you meet the BAS math requirement for Application Development.";
+    } else {
+      message += "You do not yet meet the BAS math requirement.";
+
+      if (result.next !== "") {
+        message += `<br>Next recommended course is <strong>${result.next}</strong>.`;
+      }
+    }
+
+    box.innerHTML = message;
+  }
+</script>
+
+</body>
+</html>
