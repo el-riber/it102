@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BAS Requirements Checker</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      line-height: 1.4;
+    }
+    h1 {
+      margin-bottom: 0.25rem;
+    }
+    form {
+      margin: 1rem 0;
+    }
+    label {
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+    input[type="text"] {
+      padding: 0.25rem 0.5rem;
+      min-width: 140px;
+    }
+    button {
+      margin-left: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      cursor: pointer;
+    }
+    #results p {
+      margin: 0.35rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>BAS Application Development Eligibility Checker</h1>
+  <p>
+    Enter your most recent or highest math course to check if you meet
+    the BAS math requirement.
+  </p>
+
+  <form id="mathForm" onsubmit="main(); return false;">
+    <label for="courseInput">Math Course:</label>
+    <input
+      type="text"
+      id="courseInput"
+      name="courseInput"
+      placeholder="e.g., MATH097, MATH146, MATH151"
+    >
+    <button type="submit">Check Eligibility</button>
+  </form>
+
+  <div id="results"></div>
+
+  <script>
+    // ---------------------------------------------------------
+    //  Courses stored as objects (cart notation w/ fields)
+    // ---------------------------------------------------------
+    const allMathCourses = {
+      MATH080: { name: "Preparatory Math",                  qualifies: false, next: "MATH085" },
+      MATH081: { name: "Basic Math",                        qualifies: false, next: "MATH084" },
+      MATH084: { name: "Algebra I",                         qualifies: false, next: "MATH085" },
+      MATH085: { name: "Algebra II",                        qualifies: false, next: "MATH097" },
+      MATH097: { name: "Elementary Algebra",                qualifies: false, next: "MATH098" },
+      MATH098: { name: "Intermediate Algebra",              qualifies: false, next: "MATH099" },
+      MATH099: { name: "Essentials of Intermediate Algebra",qualifies: false, next: "MATH107" },
+
+      MATH107: { name: "Math in Society",                   qualifies: false, next: "MATH116" },
+      MATH116: { name: "Applications of Math",              qualifies: false, next: "MATH141" },
+
+      MATH141: { name: "Precalculus I",                     qualifies: false, next: "MATH142" },
+      MATH142: { name: "Precalculus II",                    qualifies: false, next: "MATH151" },
+
+      // Statistics / Calculus (QSR)
+      MATH146: { name: "Elementary Statistics",             qualifies: true,  next: "" },
+      MATH148: { name: "Business Calculus",                 qualifies: true,  next: "" },
+      MATH151: { name: "Calculus I",                        qualifies: true,  next: "MATH152" },
+      MATH152: { name: "Calculus II",                       qualifies: true,  next: "MATH163" },
+      MATH163: { name: "Calculus III",                      qualifies: true,  next: "MATH238" },
+
+      // 200-level statistics / linear algebra / etc.
+      MATH211: { name: "Elements of Statistical Methods",   qualifies: true,  next: "" },
+      MATH220: { name: "Linear Algebra",                    qualifies: true,  next: "" },
+      MATH224: { name: "Vector Calculus",                   qualifies: true,  next: "" },
+      MATH238: { name: "Differential Equations",            qualifies: true,  next: "" }
+    };
+
+    // ---------------------------------------------------------
+    //  Main function
+    //  1. Get the course (getCourseNumber)
+    //  2. If course is null, display message to enter valid course
+    //  3. Otherwise call checkEligibility(course)
+    //  4. Display results using displayResults()
+    // ---------------------------------------------------------
+    function main () {
+      const courseCode = getCourseNumber();
+      if (!courseCode) return;        // invalid input handled in getCourseNumber
+
+      const result = checkEligibility(courseCode);
+      displayResults(result);
+    }
+
+    // ---------------------------------------------------------
+    //  Get course from form and validate
+    //  Returns valid course code (e.g. "MATH097") or null
+    // ---------------------------------------------------------
+    function getCourseNumber () {
+      const inputEl   = document.getElementById("courseInput");
+      const resultsEl = document.getElementById("results");
+
+      let value = inputEl.value.trim();
+
+      // 1. No blanks
+      if (value === "") {
+        resultsEl.innerHTML =
+          "<p>Please enter your most recent or highest math course.</p>";
+        return null;
+      }
+
+      // 2. Normalize: remove spaces, upper-case, drop ampersand if present
+      value = value.toUpperCase().replace(/\s+/g, "").replace("&", "");
+
+      // 3. Basic pattern check: must start with "MATH" and have digits after
+      const pattern = /^MATH\d{3}$/;
+      if (!pattern.test(value)) {
+        resultsEl.innerHTML =
+          "<p>Please enter a valid NSC MATH course, such as " +
+          "<strong>MATH097</strong>, <strong>MATH146</strong>, or <strong>MATH151</strong>.</p>";
+        return null;
+      }
+
+      // 4. Verify that course exists in our table
+      if (!allMathCourses[value]) {
+        resultsEl.innerHTML =
+          `<p>Sorry, I don't recognize the course <strong>${value}</strong>. ` +
+          `Please enter a math course from the NSC sequence (for example MATH097, MATH146, MATH151).</p>`;
+        return null;
+      }
+
+      return value;
+    }
+
+    // ---------------------------------------------------------
+    //  Check if course meets BAS math requirement
+    //  Returns a literal object:
+    //    { code, name, meets, nextCode, nextName }
+    // ---------------------------------------------------------
+    function checkEligibility (courseCode) {
+      const info = allMathCourses[courseCode];
+
+      const nextCode = info.next;
+      const nextName = nextCode && allMathCourses[nextCode]
+        ? allMathCourses[nextCode].name
+        : "";
+
+      return {
+        code: courseCode,
+        name: info.name,
+        meets: info.qualifies,
+        nextCode: nextCode,
+        nextName: nextName
+      };
+    }
+
+    // ---------------------------------------------------------
+    //  Display results to webpage using innerHTML
+    // ---------------------------------------------------------
+    function displayResults (result) {
+      const resultsEl = document.getElementById("results");
+      if (!result) return;
+
+      let html = "";
+
+      html += `<p><strong>Math Course:</strong> ${result.code} &mdash; ${result.name}</p>`;
+
+      if (result.meets) {
+        html += "<p>Congratulations! You've met the math requirement for the BAS in Application Development.</p>";
+      } else {
+        html += "<p>You do not yet meet the BAS math requirement for the BAS in Application Development.</p>";
+
+        if (result.nextCode && result.nextName) {
+          html += `<p>You should next consider taking <strong>${result.nextCode}</strong> (${result.nextName}).</p>`;
+        }
+      }
+
+      resultsEl.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
