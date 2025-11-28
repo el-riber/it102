@@ -1,0 +1,59 @@
+
+// Build a full deck of 52 playing cards
+
+
+// Suits and Values
+const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+const values = [
+  "Ace", "2", "3", "4", "5", "6", "7",
+  "8", "9", "10", "Jack", "Queen", "King"
+];
+
+// Create the deck
+let deck = [];
+
+for (let s = 0; s < suits.length; s++) {
+  for (let v = 0; v < values.length; v++) {
+    deck.push(values[v] + " of " + suits[s]);
+  }
+}
+
+
+// Function to display the deck
+
+function displayDeck(list) {
+  for (let i = 0; i < list.length; i++) {
+    console.log(list[i]);
+  }
+}
+
+
+// Shuffle Function (Fisher–Yates Algorithm)
+
+function shuffleDeck(deckArray) {
+  for (let i = deckArray.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+
+    // Swap positions
+    const temp = deckArray[i];
+    deckArray[i] = deckArray[randomIndex];
+    deckArray[randomIndex] = temp;
+  }
+}
+
+
+// Display original deck
+
+console.log("----- ORIGINAL DECK -----");
+displayDeck(deck);
+
+
+// Shuffle the deck
+
+shuffleDeck(deck);
+
+
+// Display shuffled deck
+
+console.log("\n----- SHUFFLED DECK -----");
+displayDeck(deck);
