@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Blackjack Game</title>
+    <!-- If style.css is in same folder as this file: -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Blackjack</h1>
+
+        <!-- Dealer section -->
+        <h2>Dealer</h2>
+        <div id="dealer-cards" class="cards"></div>
+        <p>Total: <span id="dealer-total">0</span></p>
+
+        <hr>
+
+        <!-- Player section -->
+        <h2>Player</h2>
+        <div id="player-cards" class="cards"></div>
+        <p>Total: <span id="player-total">0</span></p>
+
+        <!-- Status message -->
+        <p id="status-message">Click DEAL to start a new hand.</p>
+
+        <!-- Controls -->
+        <button id="deal-btn">Deal</button>
+        <button id="hit-btn" disabled>Hit</button>
+        <button id="stand-btn" disabled>Stand</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
